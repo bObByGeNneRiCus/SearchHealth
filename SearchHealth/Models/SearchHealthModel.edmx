@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="SearchHealthModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="UnidadeSaude">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Tipo_Instituição" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Tipo_Emergência" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Nome" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Endereço" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Telefone" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Latitude" Type="float" Nullable="false" />
+          <Property Name="Longitude" Type="float" Nullable="false" />
+          <Property Name="Link_pt" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Link_en" Type="nvarchar" MaxLength="100" />
+          <Property Name="Link_es" Type="nvarchar" MaxLength="100" />
+          <Property Name="Especialidades_pt" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="Especialidades_en" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="Especialidades_es" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="GeoLocalizacao" Type="geography" />
+        </EntityType>
+        <EntityContainer Name="SearchHealthModelStoreContainer">
+          <EntitySet Name="UnidadeSaude" EntityType="Self.UnidadeSaude" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SearchHealthModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="UnidadeSaude">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Tipo_Instituição" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Tipo_Emergência" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Nome" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Endereço" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Telefone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Latitude" Type="Double" Nullable="false" />
+          <Property Name="Longitude" Type="Double" Nullable="false" />
+          <Property Name="Link_pt" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Link_en" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Link_es" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Especialidades_pt" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Especialidades_en" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Especialidades_es" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="SearchHealthEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="UnidadeSaude" EntityType="Self.UnidadeSaude" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SearchHealthModelStoreContainer" CdmEntityContainer="SearchHealthEntities">
+          <EntitySetMapping Name="UnidadeSaude">
+            <EntityTypeMapping TypeName="SearchHealthModel.UnidadeSaude">
+              <MappingFragment StoreEntitySet="UnidadeSaude">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Tipo_Instituição" ColumnName="Tipo_Instituição" />
+                <ScalarProperty Name="Tipo_Emergência" ColumnName="Tipo_Emergência" />
+                <ScalarProperty Name="Nome" ColumnName="Nome" />
+                <ScalarProperty Name="Endereço" ColumnName="Endereço" />
+                <ScalarProperty Name="Telefone" ColumnName="Telefone" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Link_pt" ColumnName="Link_pt" />
+                <ScalarProperty Name="Link_en" ColumnName="Link_en" />
+                <ScalarProperty Name="Link_es" ColumnName="Link_es" />
+                <ScalarProperty Name="Especialidades_pt" ColumnName="Especialidades_pt" />
+                <ScalarProperty Name="Especialidades_en" ColumnName="Especialidades_en" />
+                <ScalarProperty Name="Especialidades_es" ColumnName="Especialidades_es" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
