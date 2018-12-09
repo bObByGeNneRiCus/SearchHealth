@@ -8,9 +8,14 @@ namespace SearchHealth.Controllers
 {
     public class HomeController : Controller
     {
+        Models.SearchHealthEntities db = new Models.SearchHealthEntities();
+
         public ActionResult Index()
         {
-            return View();
+            var lstUnidadeSaude = new List<Models.UnidadeSaude>();
+            lstUnidadeSaude = db.UnidadeSaude.ToList();
+
+            return View(lstUnidadeSaude);
         }
 
         public ActionResult About()
