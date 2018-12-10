@@ -9,13 +9,13 @@ namespace SearchHealth.Controllers
     public class HomeController : Controller
     {
         Models.SearchHealthEntities db = new Models.SearchHealthEntities();
-
+            
         public ActionResult Index()
         {
             var lstUnidadeSaude = new List<Models.UnidadeSaude>();
             lstUnidadeSaude = db.UnidadeSaude.ToList();
 
-            return View(lstUnidadeSaude);
+            return View(lstUnidadeSaude);       
         }
 
         public JsonResult GetListUnidadeSaude()

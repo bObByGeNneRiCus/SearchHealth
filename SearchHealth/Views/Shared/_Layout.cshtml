@@ -8,53 +8,15 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
-    <script>
-        function getListUnidadeSaude() {
-            $.ajax({
-                type: 'GET',
-                dataType: 'json',
-                url: '@Url.Action("GetListUnidadeSaude")',
-                success: function () {
-                    if (JSON.stringify(result) !== null) {
-                        lstUnidadeSaude = JSON.stringify(result);
-                        var parentDiv = $("#unidadeSaudeBlock");
-                        //parentDiv = document.getElementById("unidadeSaudeBlock");
-
-                        lstUnidadeSaude.forEach(function (unidadeSaude) {
-                            var divUnidade = document.createElement("div");
-                            divUnidade.setAttribute('class', 'card');
-                            divUnidade.innerHTML = unidadeSaude.Nome + ' - <a href="">Ver Rota</a>';
-                            parentDiv.appendChild(divUnidade);
-                        });
-
-                        initMap(lstUnidadeSaude);
-                    }
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
-        }
-
-        // Initialize and add the map
-        function initMap(lstUnidadeSaude) {
-            // The location of Uluru
-            var uluru = { lat: -30.0339083, lng: -51.0833056 };
-            // The map, centered at Uluru
-            var map = new google.maps.Map(
-                document.getElementById('map'), { zoom: 15, center: uluru });
-            // The marker, positioned at Uluru
-            var marker = new google.maps.Marker({ position: uluru, map: map });
-        }
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLkbksLFwndt1o03uJhqW3QaNJu6g6_fA&libraries=places">
     </script>
+
     <!--Load the API from the specified URL
     * The async attribute allows the browser to render the page while the API loads
     * The key parameter will contain your own API key (which is not needed for this tutorial)
     * The callback parameter executes the initMap() function
     -->
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLkbksLFwndt1o03uJhqW3QaNJu6g6_fA">
-    </script>
 
     <style>
         #map {
@@ -71,7 +33,7 @@
             padding: 15px 15px 15px 15px;
         }
 
-        .body-content-left {    
+        .body-content-left {
             display: inline-block;
             background-color: whitesmoke;
             width: 380px;
@@ -89,7 +51,6 @@
 
         header {
             background-color: steelblue;
-
             margin-bottom: 5px;
             color: whitesmoke;
             border-radius: 3px 4px;
@@ -97,7 +58,7 @@
 
         h1, h2 {
             display: inline-block;
-            padding-left:10px;
+            padding-left: 10px;
         }
 
         .card {
@@ -107,6 +68,10 @@
             line-height: 50px;
             padding: 0px initial 0px initial;
             word-wrap: break-word;
+        }
+
+        [class=info] p:first-of-type {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -130,3 +95,75 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
+
+<script>
+        //Query: select * from UnidadeSaude order by
+        //geography:: STGeomFromText('POINT(' + convert(varchar(20), -30.0293501) + ' ' + convert(varchar(20), -51.2361831) + ')', 4326).STDistance(Geolocalizacao) desc
+
+        function getListUnidadeSaude() {
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: '@Url.Action("GetListUnidadeSaude")',
+                success: function (lstUnidadeSaude) {
+                    if (lstUnidadeSaude !== null) {
+                        parentDiv = document.getElementById("unidadeSaudeBlock");
+
+                        $.each(lstUnidadeSaude, function (i, unidadeSaude) {
+                            var divUnidade = document.createElement("div");
+                            divUnidade.setAttribute('class', 'card');
+                            divUnidade.innerHTML = unidadeSaude.Nome + ' - <a href="">Ver Rota</a>';
+                            parentDiv.appendChild(divUnidade);
+                        });
+
+                        initMap(lstUnidadeSaude);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        // Initialize and add the map
+        function initMap(lstUnidadeSaude) {
+            // The location of Uluru
+            var uluru = { lat: -30.0339083, lng: -51.0833056 };
+            // The map, centered at Uluru
+            var map = new google.maps.Map(
+                document.getElementById('map'), { zoom: 15, center: uluru });
+            // The marker, positioned at Uluru
+            var lstMarker = [];
+            $.each(lstUnidadeSaude, function(i, unidadeSaude) {
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(unidadeSaude.Latitude, unidadeSaude.Longitude),
+                    map: map,
+                    id: unidadeSaude.Id
+                });
+
+                var info = new google.maps.InfoWindow({
+                    content: '<div class="info"><p>' + unidadeSaude.Nome + '</p><p>Telefone: ' + unidadeSaude.Telefone + '</p><p>Endereço: ' + unidadeSaude.Endereço + '</p></div>'
+                });
+
+                google.maps.event.addListener(marker, 'click', function () {
+                    info.open(map, marker);
+                });
+
+                lstMarker.push(marker);
+            });
+        }
+
+        $(window).on("load", function() {
+            var places = new google.maps.places.Autocomplete(document.getElementById('txtEndereco'));
+            google.maps.event.addListener(places, 'place_changed', function () {
+                var place = places.getPlace();
+                var address = place.formatted_address;
+                var latitude = place.geometry.location.lat();
+                var longitude = place.geometry.location.lng();
+                var mesg = "Address: " + address;
+                mesg += "\nLatitude: " + latitude;
+                mesg += "\nLongitude: " + longitude;
+                alert(mesg);
+            });
+        });
+</script>
