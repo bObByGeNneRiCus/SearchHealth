@@ -7,14 +7,14 @@
 <div class="body-content-left">
     <div class="row">
         <input type="text" id="txtEndereco"  class="form-control"  style="display:inline-block !important;" placeholder="Informe o endereço" />
-        <input type="button" id="btnPesquisar" class="btn btn-primary" value="Buscar" />
+        <input type="button" id="btnPesquisar" class="btn btn-primary" value="Buscar" onclick="getListUnidadeSaude();"/>
     </div>
-    <div class="row">
+    <div id="unidadeSaudeBlock" class="row">
         @foreach (var unidadeSaude in Model)
         {
-            <div class="card">
+            @*<div class="card">
                 @unidadeSaude.Nome - <a href="">Ver Rota</a>
-            </div>
+            </div>*@
         }
     </div>
 </div>

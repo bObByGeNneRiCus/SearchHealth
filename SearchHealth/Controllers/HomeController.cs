@@ -18,18 +18,12 @@ namespace SearchHealth.Controllers
             return View(lstUnidadeSaude);
         }
 
-        public ActionResult About()
+        public JsonResult GetListUnidadeSaude()
         {
-            ViewBag.Message = "Your application description page.";
+            var lstUnidadeSaude = new List<Models.UnidadeSaude>();
+            lstUnidadeSaude = db.UnidadeSaude.ToList();
 
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            return new JsonResult { Data = lstUnidadeSaude, JsonRequestBehavior = JsonRequestBehavior.AllowGet};
         }
     }
 }

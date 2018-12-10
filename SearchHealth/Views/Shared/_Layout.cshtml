@@ -9,8 +9,35 @@
     @Scripts.Render("~/bundles/modernizr")
 
     <script>
+        function getListUnidadeSaude() {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                url: '@Url.Action("GetListUnidadeSaude")',
+                success: function () {
+                    if (JSON.stringify(result) !== null) {
+                        lstUnidadeSaude = JSON.stringify(result);
+                        var parentDiv = $("#unidadeSaudeBlock");
+                        //parentDiv = document.getElementById("unidadeSaudeBlock");
+
+                        lstUnidadeSaude.forEach(function (unidadeSaude) {
+                            var divUnidade = document.createElement("div");
+                            divUnidade.setAttribute('class', 'card');
+                            divUnidade.innerHTML = unidadeSaude.Nome + ' - <a href="">Ver Rota</a>';
+                            parentDiv.appendChild(divUnidade);
+                        });
+
+                        initMap(lstUnidadeSaude);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
         // Initialize and add the map
-        function initMap() {
+        function initMap(lstUnidadeSaude) {
             // The location of Uluru
             var uluru = { lat: -30.0339083, lng: -51.0833056 };
             // The map, centered at Uluru
@@ -26,7 +53,7 @@
     * The callback parameter executes the initMap() function
     -->
     <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLkbksLFwndt1o03uJhqW3QaNJu6g6_fA&callback=initMap">
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLkbksLFwndt1o03uJhqW3QaNJu6g6_fA">
     </script>
 
     <style>
