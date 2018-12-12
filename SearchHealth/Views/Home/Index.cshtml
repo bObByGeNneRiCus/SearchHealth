@@ -5,18 +5,13 @@
 }
 
 <div class="body-content-left">
+    <div id="divAlertaPesquisa" class="row" hidden="hidden"><p class="alert-danger">Pesquise e selecione um endereço.</p></div>
     <div class="row">
-        <input type="text" id="txtEndereco"  class="form-control"  style="display:inline-block !important;" placeholder="Informe o endereço" />
+        <span></span>
+        <input type="text" id="txtEndereco"  class="form-control"  style="display:inline-block !important;" placeholder="Informe o endereço de origem"/>
         <input type="button" id="btnPesquisar" class="btn btn-primary" value="Buscar" onclick="getListUnidadeSaude();"/>
     </div>
-    <div id="unidadeSaudeBlock" class="row">
-        @foreach (var unidadeSaude in Model)
-        {
-            @*<div class="card">
-                @unidadeSaude.Nome - <a href="">Ver Rota</a>
-            </div>*@
-        }
-    </div>
+    <div id="unidadeSaudeBlock" class="row"></div>
 </div>
 <div class="body-content-right">
     <div id="map">

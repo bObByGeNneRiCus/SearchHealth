@@ -40,6 +40,7 @@
             height: 550px;
             padding-left: 15px;
             overflow-y: scroll;
+            overflow-x:hidden;
         }
 
         .body-content-right {
@@ -73,6 +74,10 @@
         [class=info] p:first-of-type {
             font-weight: bold;
         }
+
+        .tooltip:hover {
+            content: attr(data-tip);
+        }
     </style>
 </head>
 <body>
@@ -99,8 +104,21 @@
 <script>
         //Query: select * from UnidadeSaude order by
         //geography:: STGeomFromText('POINT(' + convert(varchar(20), -30.0293501) + ' ' + convert(varchar(20), -51.2361831) + ')', 4326).STDistance(Geolocalizacao) desc
+    var enderecoOrigem;
+    var latitudeOrigem;
+    var longitudeOrigem;
+    var directionService;
+    var showRoute;
 
-        function getListUnidadeSaude() {
+    function clearSearch(parentDiv) {
+        while (parentDiv.firstChild) {
+            parentDiv.removeChild(parentDiv.firstChild);
+        }
+    }
+
+    function getListUnidadeSaude() {
+        $('#divAlertaPesquisa').hide();     
+        if (latitudeOrigem) {
             $.ajax({
                 type: 'POST',
                 dataType: 'json',
@@ -108,11 +126,12 @@
                 success: function (lstUnidadeSaude) {
                     if (lstUnidadeSaude !== null) {
                         parentDiv = document.getElementById("unidadeSaudeBlock");
+                        clearSearch(parentDiv);
 
                         $.each(lstUnidadeSaude, function (i, unidadeSaude) {
                             var divUnidade = document.createElement("div");
                             divUnidade.setAttribute('class', 'card');
-                            divUnidade.innerHTML = unidadeSaude.Nome + ' - <a href="">Ver Rota</a>';
+                            divUnidade.innerHTML = unidadeSaude.Nome + ' - <a href="javascript:" onclick="exibirRota(' + unidadeSaude.Latitude + ', ' + unidadeSaude.Longitude + ')">Ver Rota</a>';
                             parentDiv.appendChild(divUnidade);
                         });
 
@@ -124,46 +143,82 @@
                 }
             });
         }
-
-        // Initialize and add the map
-        function initMap(lstUnidadeSaude) {
-            // The location of Uluru
-            var uluru = { lat: -30.0339083, lng: -51.0833056 };
-            // The map, centered at Uluru
-            var map = new google.maps.Map(
-                document.getElementById('map'), { zoom: 15, center: uluru });
-            // The marker, positioned at Uluru
-            var lstMarker = [];
-            $.each(lstUnidadeSaude, function(i, unidadeSaude) {
-                var marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(unidadeSaude.Latitude, unidadeSaude.Longitude),
-                    map: map,
-                    id: unidadeSaude.Id
-                });
-
-                var info = new google.maps.InfoWindow({
-                    content: '<div class="info"><p>' + unidadeSaude.Nome + '</p><p>Telefone: ' + unidadeSaude.Telefone + '</p><p>Endereço: ' + unidadeSaude.Endereço + '</p></div>'
-                });
-
-                google.maps.event.addListener(marker, 'click', function () {
-                    info.open(map, marker);
-                });
-
-                lstMarker.push(marker);
-            });
+        else {
+            $('#divAlertaPesquisa').show();
         }
+    }
 
-        $(window).on("load", function() {
-            var places = new google.maps.places.Autocomplete(document.getElementById('txtEndereco'));
-            google.maps.event.addListener(places, 'place_changed', function () {
-                var place = places.getPlace();
-                var address = place.formatted_address;
-                var latitude = place.geometry.location.lat();
-                var longitude = place.geometry.location.lng();
-                var mesg = "Address: " + address;
-                mesg += "\nLatitude: " + latitude;
-                mesg += "\nLongitude: " + longitude;
-                alert(mesg);
-            });
+    function initMap(lstUnidadeSaude) {
+        showRoute = new google.maps.DirectionsRenderer({ suppressMarkers: true });
+
+        var uluru = { lat: latitudeOrigem, lng: longitudeOrigem };
+
+        var map = new google.maps.Map(
+            document.getElementById('map'), { zoom: 13, center: uluru });
+
+        showRoute.setMap(map);
+        showRoute.setPanel(document.getElementById('map'));
+
+        var lstMarker = [];
+        var markerOrigem = new google.maps.Marker({
+            position: new google.maps.LatLng(latitudeOrigem, longitudeOrigem),
+            icon: 'Content/Icons/male-2.png',
+            map: map
         });
+
+        var infoOrigem = new google.maps.InfoWindow({
+            content: '<div class="info"><p>Endereço de origem</p><p>Endereço: ' + enderecoOrigem + '</p></div>'
+        });
+
+        google.maps.event.addListener(markerOrigem, 'click', function () {
+            infoOrigem.open(map, markerOrigem);
+        });
+
+        lstMarker.push(markerOrigem);
+
+        $.each(lstUnidadeSaude, function(i, unidadeSaude) {
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(unidadeSaude.Latitude, unidadeSaude.Longitude),
+                icon: 'Content/Icons/firstaid.png',
+                map: map,
+                id: unidadeSaude.Id
+            });
+
+            var info = new google.maps.InfoWindow({
+                content: '<div class="info"><p>' + unidadeSaude.Nome + '</p><p>Telefone: ' + unidadeSaude.Telefone + '</p><p>Endereço: ' + unidadeSaude.Endereço + '</p></div>'
+            });
+
+            google.maps.event.addListener(marker, 'click', function () {
+                info.open(map, marker);
+            });
+
+            lstMarker.push(marker);
+        });
+    }
+
+    function exibirRota(latitudeDestino, longitudeDestino) {
+        var request = {
+            origin: '' + latitudeOrigem + ', ' + longitudeOrigem + '',
+            destination: '' + latitudeDestino + ', ' + longitudeDestino + '',
+            travelMode: google.maps.DirectionsTravelMode.DRIVING
+        };
+
+        directionService.route(request, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                showRoute.setDirections(response);
+            }
+        });
+    }
+
+    $(window).on("load", function () {
+        directionService = new google.maps.DirectionsService();
+
+        var places = new google.maps.places.Autocomplete(document.getElementById('txtEndereco'));
+        google.maps.event.addListener(places, 'place_changed', function () {
+            var place = places.getPlace();
+            enderecoOrigem = place.formatted_address;
+            latitudeOrigem = place.geometry.location.lat();
+            longitudeOrigem = place.geometry.location.lng();
+        });
+    });
 </script>
