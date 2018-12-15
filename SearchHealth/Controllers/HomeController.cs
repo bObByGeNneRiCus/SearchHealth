@@ -18,10 +18,16 @@ namespace SearchHealth.Controllers
             return View(lstUnidadeSaude);       
         }
 
-        public JsonResult GetListUnidadeSaude()
+        [HttpPost]
+        public JsonResult GetListUnidadeSaude(string latitudeOrigem, string longitudeOrigem)
         {
-            var lstUnidadeSaude = new List<Models.UnidadeSaude>();
-            lstUnidadeSaude = db.UnidadeSaude.ToList();
+            var lstUnidadeSaude = db.UnidadeSaude.SqlQuery(string.Format(@"
+                select
+                    * 
+                from
+                    UnidadeSaude 
+                order by
+                    geography:: Point({0}, {1}, 4326).STDistance(Geolocalizacao)", latitudeOrigem, longitudeOrigem)).ToList<Models.UnidadeSaude>();
 
             return new JsonResult { Data = lstUnidadeSaude, JsonRequestBehavior = JsonRequestBehavior.AllowGet};
         }

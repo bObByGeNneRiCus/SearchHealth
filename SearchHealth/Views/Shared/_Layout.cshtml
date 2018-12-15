@@ -102,8 +102,6 @@
 </html>
 
 <script>
-        //Query: select * from UnidadeSaude order by
-        //geography:: STGeomFromText('POINT(' + convert(varchar(20), -30.0293501) + ' ' + convert(varchar(20), -51.2361831) + ')', 4326).STDistance(Geolocalizacao) desc
     var enderecoOrigem;
     var latitudeOrigem;
     var longitudeOrigem;
@@ -119,10 +117,12 @@
     function getListUnidadeSaude() {
         $('#divAlertaPesquisa').hide();     
         if (latitudeOrigem) {
+            var data = { latitudeOrigem: latitudeOrigem, longitudeOrigem: longitudeOrigem };
             $.ajax({
                 type: 'POST',
                 dataType: 'json',
                 url: '@Url.Action("GetListUnidadeSaude")',
+                data: data,
                 success: function (lstUnidadeSaude) {
                     if (lstUnidadeSaude !== null) {
                         parentDiv = document.getElementById("unidadeSaudeBlock");
@@ -213,7 +213,10 @@
     $(window).on("load", function () {
         directionService = new google.maps.DirectionsService();
 
-        var places = new google.maps.places.Autocomplete(document.getElementById('txtEndereco'));
+        var options = {
+            componentRestrictions: { country: 'br' }
+        };
+        var places = new google.maps.places.Autocomplete(document.getElementById('txtEndereco'), options);
         google.maps.event.addListener(places, 'place_changed', function () {
             var place = places.getPlace();
             enderecoOrigem = place.formatted_address;
